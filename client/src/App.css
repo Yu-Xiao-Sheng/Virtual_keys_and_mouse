@@ -1,0 +1,296 @@
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.app-container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.header {
+  background: #001529;
+  padding: 0 20px;
+  color: white;
+  text-align: center;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 64px;
+}
+
+.header h1 {
+  color: white;
+  margin: 0;
+  flex: 1;
+  text-align: center;
+  font-size: 18px;
+}
+
+.latency-display {
+  color: white;
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.latency-good { color: #52c41a; }
+.latency-medium { color: #faad14; }
+.latency-high { color: #ff4d4f; }
+
+.content {
+  flex: 1;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  background: #f0f2f5;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  min-height: calc(100vh - 64px);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.connection-panel {
+  width: 100%;
+  max-width: 800px;
+  padding: 10px;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  z-index: 99;
+  box-sizing: border-box;
+}
+
+.control-container {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 20px;
+  box-sizing: border-box;
+}
+
+/* 触控板容器 */
+.touchpad-wrapper {
+  width: 100%;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.touchpad-container {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  touch-action: none;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+/* 虚拟键盘样式 */
+.keyboard-container {
+  width: 100%;
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.keyboard-controls {
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: center;
+  position: sticky;
+  top: 0;
+  background: #fff;
+  z-index: 1;
+  padding: 10px 0;
+}
+
+.keyboard-layout {
+  width: 100%;
+  transition: all 0.3s ease;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.key-row {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin-bottom: 4px;
+  flex-wrap: nowrap;
+  min-height: 40px;
+}
+
+.key-spacer {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+/* 键盘大小设置 */
+.key-size-small .key {
+  min-width: 28px;
+  height: 32px;
+  font-size: 12px;
+  padding: 0 4px;
+}
+
+.key-size-medium .key {
+  min-width: 36px;
+  height: 40px;
+  font-size: 14px;
+  padding: 0 6px;
+}
+
+.key-size-large .key {
+  min-width: 44px;
+  height: 48px;
+  font-size: 16px;
+  padding: 0 8px;
+}
+
+/* 特殊键宽度 - 小尺寸 */
+.key-size-small .key[data-width="1.5"] { width: 42px; }
+.key-size-small .key[data-width="2"] { width: 56px; }
+.key-size-small .key[data-width="2.25"] { width: 63px; }
+.key-size-small .key[data-width="2.5"] { width: 70px; }
+.key-size-small .key[data-width="6.25"] { width: 175px; }
+
+/* 特殊键宽度 - 中尺寸 */
+.key-size-medium .key[data-width="1.5"] { width: 54px; }
+.key-size-medium .key[data-width="2"] { width: 72px; }
+.key-size-medium .key[data-width="2.25"] { width: 81px; }
+.key-size-medium .key[data-width="2.5"] { width: 90px; }
+.key-size-medium .key[data-width="6.25"] { width: 225px; }
+
+/* 特殊键宽度 - 大尺寸 */
+.key-size-large .key[data-width="1.5"] { width: 66px; }
+.key-size-large .key[data-width="2"] { width: 88px; }
+.key-size-large .key[data-width="2.25"] { width: 99px; }
+.key-size-large .key[data-width="2.5"] { width: 110px; }
+.key-size-large .key[data-width="6.25"] { width: 275px; }
+
+/* 方向键布局 */
+.arrow-keys {
+  display: grid;
+  grid-template-areas:
+    ". up ."
+    "left down right";
+  gap: 4px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.arrow-key {
+  width: 100% !important;
+}
+
+.arrow-key.up { grid-area: up; }
+.arrow-key.down { grid-area: down; }
+.arrow-key.left { grid-area: left; }
+.arrow-key.right { grid-area: right; }
+
+.key {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.1s ease-out;
+  background: #ffffff;
+  position: relative;
+  overflow: hidden;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.key:hover {
+  background: #f5f5f5;
+  border-color: #40a9ff;
+}
+
+.key:active,
+.key.pressed {
+  background: #e6f7ff;
+  border-color: #1890ff;
+  color: #1890ff;
+  transform: translateY(1px);
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+  .header h1 {
+    font-size: 16px;
+  }
+
+  .content {
+    padding: 8px;
+  }
+
+  .control-container {
+    gap: 10px;
+  }
+
+  .connection-panel {
+    padding: 8px;
+  }
+
+  .keyboard-container {
+    padding: 8px;
+  }
+
+  .key-row {
+    gap: 3px;
+    margin-bottom: 3px;
+  }
+}
+
+/* 动画效果 */
+.touchpad-wrapper {
+  opacity: 1;
+  max-height: 1000px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.touchpad-wrapper.hidden {
+  opacity: 0;
+  max-height: 0;
+}
+
+/* 禁用默认触摸行为 */
+* {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}

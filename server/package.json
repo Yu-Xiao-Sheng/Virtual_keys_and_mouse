@@ -1,0 +1,22 @@
+{
+  "name": "virtual-input-server",
+  "version": "1.0.0",
+  "description": "Virtual keyboard and mouse server for Windows",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js"
+  },
+  "keywords": [
+    "virtual-input",
+    "websocket",
+    "server"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ws": "^8.13.0",
+    "robotjs": "^0.6.0"
+  }
+}
