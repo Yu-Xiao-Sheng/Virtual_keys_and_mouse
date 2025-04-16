@@ -255,10 +255,13 @@ html, body {
 
   .control-container {
     gap: 10px;
+    max-width: 100%;
   }
 
   .connection-panel {
     padding: 8px;
+    flex-direction: column;
+    align-items: center;
   }
 
   .keyboard-container {
@@ -268,6 +271,68 @@ html, body {
   .key-row {
     gap: 3px;
     margin-bottom: 3px;
+  }
+
+  .touchpad-container {
+    aspect-ratio: 4/3; /* 更适合移动设备的宽高比 */
+  }
+}
+
+/* 小屏幕设备优化 */
+@media (max-width: 480px) {
+  .header {
+    height: 56px;
+    padding: 0 12px;
+  }
+
+  .content {
+    padding: 6px;
+    min-height: calc(100vh - 56px);
+  }
+
+  .control-container {
+    gap: 8px;
+    padding-bottom: 12px;
+  }
+
+  .touchpad-container {
+    aspect-ratio: 1/1; /* 在小屏幕上使用正方形布局 */
+  }
+
+  .keyboard-controls {
+    padding: 6px 0;
+  }
+
+  /* 调整按钮大小以适应小屏幕 */
+  .touchpad-buttons {
+    height: 40px;
+    padding: 0 12px;
+  }
+
+  .touchpad-buttons .ant-btn {
+    padding: 0 8px;
+    height: 28px;
+    font-size: 12px;
+  }
+}
+
+/* 确保在横屏模式下的合理布局 */
+@media (max-width: 896px) and (orientation: landscape) {
+  .content {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .control-container {
+    flex-direction: row;
+    max-width: none;
+  }
+
+  .touchpad-wrapper,
+  .keyboard-container {
+    width: 48%;
+    min-width: 300px;
   }
 }
 
@@ -282,6 +347,23 @@ html, body {
 .touchpad-wrapper.hidden {
   opacity: 0;
   max-height: 0;
+}
+
+/* 隐藏滚动条但保持可滚动 */
+::-webkit-scrollbar {
+  display: none;
+}
+
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* 移动设备滚动优化 */
+@media (max-width: 768px) {
+  .content {
+    overscroll-behavior: contain; /* 防止过度滚动 */
+  }
 }
 
 /* 禁用默认触摸行为 */
