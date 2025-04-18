@@ -23,16 +23,29 @@ const TouchPad = ({ onEvent }) => {
 
   // 处理触摸开始
   const handleTouchStart = (e) => {
-    const touch = e.touches[0];
     const target = e.target;
     
     // 确保事件发生在触摸板区域内
     if (touchpadRef.current && touchpadRef.current.contains(target)) {
       e.stopPropagation();  // 阻止事件冒泡
+      
+      // 检测双指触摸
+      if (e.touches.length === 2) {
+        setIsTapping(true);
+        setLastTouch({
+          time: Date.now(),
+          isTwoFingers: true
+        });
+        return;
+      }
+
+      // 单指触摸
+      const touch = e.touches[0];
       setLastTouch({
         x: touch.clientX,
         y: touch.clientY,
-        time: Date.now()
+        time: Date.now(),
+        isTwoFingers: false
       });
       setIsTapping(true);
     }
@@ -56,7 +69,7 @@ const TouchPad = ({ onEvent }) => {
 
   // 处理触摸移动
   const handleTouchMove = (e) => {
-    if (!lastTouch) return;
+    if (!lastTouch || e.touches.length === 2) return; // 双指触摸时不处理移动
 
     const touch = e.touches[0];
     const target = e.target;
@@ -73,7 +86,8 @@ const TouchPad = ({ onEvent }) => {
       setLastTouch({
         x: touch.clientX,
         y: touch.clientY,
-        time: Date.now()
+        time: Date.now(),
+        isTwoFingers: false
       });
       setIsTapping(false);
     }
@@ -83,7 +97,6 @@ const TouchPad = ({ onEvent }) => {
   const handleTouchEnd = (e) => {
     if (!lastTouch) return;
 
-    const touch = e.changedTouches[0];
     const target = e.target;
 
     // 确保事件发生在触摸板区域内
@@ -94,22 +107,31 @@ const TouchPad = ({ onEvent }) => {
 
       // 检测是否为点击（短触摸）
       if (isTapping && tapDuration < 200) {
-        // 检测双击
-        if (now - lastTapTime < 300) {
+        if (lastTouch.isTwoFingers) {
+          // 双指点击 - 触发右键点击
           onEvent({
             type: 'mouseClick',
-            button: 'left',
-            double: true
-          });
-          setLastTapTime(0);
-        } else {
-          // 单击
-          onEvent({
-            type: 'mouseClick',
-            button: 'left',
+            button: 'right',
             double: false
           });
-          setLastTapTime(now);
+        } else {
+          // 单指点击 - 检测双击
+          if (now - lastTapTime < 300) {
+            onEvent({
+              type: 'mouseClick',
+              button: 'left',
+              double: true
+            });
+            setLastTapTime(0);
+          } else {
+            // 单击
+            onEvent({
+              type: 'mouseClick',
+              button: 'left',
+              double: false
+            });
+            setLastTapTime(now);
+          }
         }
       }
     }
