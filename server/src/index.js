@@ -29,7 +29,7 @@ class Logger {
     static log(type, message, details = null) {
         const timestamp = new Date().toISOString();
         const logMessage = `[${timestamp}] ${type}: ${message}`;
-        
+
         if (details) {
             console.log(logMessage, details);
         } else {
@@ -42,8 +42,8 @@ class Logger {
         if (type === 'keyPress') {
             this.log('键盘事件', `按键: ${details.key}${details.modifier.length > 0 ? ' 修饰键: ' + details.modifier.join('+') : ''}`);
         }
-        if (type === 'mouseScroll') {
-            this.log('鼠标滚动', `滚动: ${details.x}, ${details.y}`);
+        if (type === 'mouseScroll-up' || type === 'mouseScroll-down') {
+            this.log('鼠标滚动', `滚动: ${type}`);
         }
     }
 
@@ -86,8 +86,12 @@ class InputEventHandler {
                     robot.mouseClick(event.button, event.double);
                     break;
 
-                case 'mouseScroll':
-                    robot.scrollMouse(event.x, event.y);
+                case 'mouseScroll-up':
+                    robot.scrollMouse(0, 10);
+                    break;
+
+                case 'mouseScroll-down':
+                    robot.scrollMouse(0, -10);
                     break;
 
                 default:
@@ -128,7 +132,7 @@ const httpServer = createServer((req, res) => {
 });
 
 // 创建WebSocket服务器
-const wss = new WebSocketServer({ 
+const wss = new WebSocketServer({
     server: httpServer,
     perMessageDeflate: false // 禁用消息压缩以减少延迟
 });
@@ -140,7 +144,7 @@ wss.on('connection', (ws, req) => {
     const clientIP = req.socket.remoteAddress;
     ws.clientId = nextClientId++;
 
-    ws.send(JSON.stringify({ 
+    ws.send(JSON.stringify({
         type: 'welcome',
         message: 'Connected to Virtual Input Server',
         serverIP: localIP,
@@ -150,13 +154,13 @@ wss.on('connection', (ws, req) => {
     ws.on('message', (data) => {
         try {
             const message = JSON.parse(data);
-            
+
             // 处理ping消息
             if (message.type === 'ping') {
                 ws.send(JSON.stringify({ type: 'pong' }));
                 return;
             }
-            
+
             // 处理单个事件或事件数组
             if (Array.isArray(message)) {
                 message.forEach(event => eventHandler.handleEvent(event));

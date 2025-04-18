@@ -151,46 +151,11 @@ const TouchPad = ({ onEvent }) => {
 
   // 处理滚轮事件
   const handleScroll = (direction) => {
-    const scrollAmount = direction === 'up' ? 5 : -5;
+    const scrollAmount = direction === 'up' ? "mouseScroll-up" : "mouseScroll-down";
     onEvent({
-      type: 'mouseScroll',
-      x: 0,
-      y: scrollAmount
+      type: scrollAmount,
     });
   };
-
-  // 处理长按滚动
-  const [scrollInterval, setScrollInterval] = useState(null);
-
-  const startScrolling = (direction) => {
-    if (scrollInterval) return; // 防止多个定时器
-    
-    // 立即触发一次滚动
-    handleScroll(direction);
-    
-    // 设置定时器持续滚动
-    const interval = setInterval(() => {
-      handleScroll(direction);
-    }, 16); // 约60fps的更新频率
-    
-    setScrollInterval(interval);
-  };
-
-  const stopScrolling = () => {
-    if (scrollInterval) {
-      clearInterval(scrollInterval);
-      setScrollInterval(null);
-    }
-  };
-
-  // 组件卸载时清理定时器
-  useEffect(() => {
-    return () => {
-      if (scrollInterval) {
-        clearInterval(scrollInterval);
-      }
-    };
-  }, [scrollInterval]);
 
   return (
     <div className="touchpad-container">
@@ -244,7 +209,7 @@ const TouchPad = ({ onEvent }) => {
           borderTop: '1px solid #d9d9d9'
         }}
       >
-        <div style={{
+        {/* <div style={{
           display: 'flex',
           gap: '20px',
           width: '100%',
@@ -252,11 +217,7 @@ const TouchPad = ({ onEvent }) => {
         }}>
           <Button
             size="large"
-            onMouseDown={() => startScrolling('up')}
-            onMouseUp={stopScrolling}
-            onMouseLeave={stopScrolling}
-            onTouchStart={() => startScrolling('up')}
-            onTouchEnd={stopScrolling}
+            onClick={() => handleScroll('up')}
             style={{
               width: '120px',
               height: '45px',
@@ -267,11 +228,7 @@ const TouchPad = ({ onEvent }) => {
           </Button>
           <Button
             size="large"
-            onMouseDown={() => startScrolling('down')}
-            onMouseUp={stopScrolling}
-            onMouseLeave={stopScrolling}
-            onTouchStart={() => startScrolling('down')}
-            onTouchEnd={stopScrolling}
+            onClick={() => handleScroll('down')}
             style={{
               width: '120px',
               height: '45px',
@@ -280,7 +237,7 @@ const TouchPad = ({ onEvent }) => {
           >
             ↓
           </Button>
-        </div>
+        </div> */}
       </div>
     </div>
   );
