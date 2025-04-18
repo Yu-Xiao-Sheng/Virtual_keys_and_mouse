@@ -17,8 +17,8 @@ const VirtualKeyboard = ({ onEvent }) => {
 
   // 功能键布局
   const functionKeys = [
-    ['Insert', 'Home', 'PageUp', 'PrtSc'],
-    ['Delete', 'End', 'PageDown', 'ScrollLock']
+    ['Insert', '', 'Home', '', 'PageUp'],
+    ['Delete', '', 'End', '', 'PageDown']
   ];
 
   // 特殊键的宽度配置
@@ -48,7 +48,7 @@ const VirtualKeyboard = ({ onEvent }) => {
     'Win': 'command',
     'Menu': 'menu',
     'Esc': 'escape',
-    
+
     // 功能键
     'PageUp': 'page_up',
     'PageDown': 'page_down',
@@ -56,15 +56,13 @@ const VirtualKeyboard = ({ onEvent }) => {
     'End': 'end',
     'Insert': 'insert',
     'Delete': 'delete',
-    'PrtSc': 'printscreen',
-    'ScrollLock': 'scroll_lock',
-    
+
     // 方向键
     '←': 'left',
     '→': 'right',
     '↑': 'up',
     '↓': 'down',
-    
+
     // 功能键
     'F1': 'f1',
     'F2': 'f2',
@@ -78,7 +76,7 @@ const VirtualKeyboard = ({ onEvent }) => {
     'F10': 'f10',
     'F11': 'f11',
     'F12': 'f12',
-    
+
     // 符号键
     '`': 'grave_accent',
     '-': 'minus',
@@ -97,7 +95,7 @@ const VirtualKeyboard = ({ onEvent }) => {
     // 获取robotjs支持的键名
     const keyName = keyMapping[key] || key.toLowerCase();
     setPressedKeys(prev => new Set([...prev, keyName]));
-    
+
     let eventData = {
       type: 'keyPress',
       key: keyName,
@@ -130,30 +128,37 @@ const VirtualKeyboard = ({ onEvent }) => {
     }
   };
 
-  const renderKey = (key, rowIndex, keyIndex) => (
-    <Button
-      key={`${rowIndex}-${keyIndex}`}
-      className={`key ${pressedKeys.has(keyMapping[key] || key.toLowerCase()) ? 'pressed' : ''}`}
-      data-width={specialKeyWidths[key] || '1'}
-      onTouchStart={(e) => {
-        e.preventDefault();
-        handleKeyDown(key);
-      }}
-      onTouchEnd={(e) => {
-        e.preventDefault();
-        handleKeyUp(key);
-      }}
-      onMouseDown={() => handleKeyDown(key)}
-      onMouseUp={() => handleKeyUp(key)}
-      onMouseLeave={() => {
-        if (pressedKeys.has(keyMapping[key] || key.toLowerCase())) {
+  const renderKey = (key, rowIndex, keyIndex) => {
+    if (key === '') {
+      return (
+        <div key={`${rowIndex}-${keyIndex}`} className="key-row" style={{ width: '30px' }}></div>
+      )
+    }
+    return (
+      <Button
+        key={`${rowIndex}-${keyIndex}`}
+        className={`key ${pressedKeys.has(keyMapping[key] || key.toLowerCase()) ? 'pressed' : ''}`}
+        data-width={specialKeyWidths[key] || '1'}
+        onTouchStart={(e) => {
+          e.preventDefault();
+          handleKeyDown(key);
+        }}
+        onTouchEnd={(e) => {
+          e.preventDefault();
           handleKeyUp(key);
-        }
-      }}
-    >
-      {key}
-    </Button>
-  );
+        }}
+        onMouseDown={() => handleKeyDown(key)}
+        onMouseUp={() => handleKeyUp(key)}
+        onMouseLeave={() => {
+          if (pressedKeys.has(keyMapping[key] || key.toLowerCase())) {
+            handleKeyUp(key);
+          }
+        }}
+      >
+        {key}
+      </Button>
+    );
+  }
 
   return (
     <div className="keyboard-container">

@@ -42,6 +42,9 @@ class Logger {
         if (type === 'keyPress') {
             this.log('键盘事件', `按键: ${details.key}${details.modifier.length > 0 ? ' 修饰键: ' + details.modifier.join('+') : ''}`);
         }
+        if (type === 'mouseScroll') {
+            this.log('鼠标滚动', `滚动: ${details.x}, ${details.y}`);
+        }
     }
 
     static error(message, error) {
@@ -53,14 +56,25 @@ class Logger {
 class InputEventHandler {
     constructor() {
         this.lastMousePosition = robot.getMousePos();
+        // 按键映射表
+        this.keyMap = {
+            'page_up': 'pageup',
+            'page_down': 'pagedown'
+        };
+    }
+
+    // 获取映射后的按键名称
+    getMappedKey(key) {
+        return this.keyMap[key] || key;
     }
 
     handleEvent(event) {
         try {
+            Logger.event(event.type, event);
             switch (event.type) {
                 case 'keyPress':
-                    Logger.event(event.type, event);
-                    robot.keyTap(event.key, event.modifier);
+                    const mappedKey = this.getMappedKey(event.key);
+                    robot.keyTap(mappedKey, event.modifier);
                     break;
 
                 case 'mouseMove':
