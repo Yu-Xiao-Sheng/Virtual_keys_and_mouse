@@ -14,7 +14,7 @@ const throttle = (func, limit) => {
 };
 
 const TouchPad = ({ onEvent }) => {
-  const [sensitivity, setSensitivity] = useState(1.2);
+  const [sensitivity, setSensitivity] = useState(8);
   const touchpadRef = useRef(null);
   const [lastTouch, setLastTouch] = useState(null);
   const [isTapping, setIsTapping] = useState(false);
@@ -23,14 +23,19 @@ const TouchPad = ({ onEvent }) => {
 
   // 处理触摸开始
   const handleTouchStart = (e) => {
-    e.preventDefault();
     const touch = e.touches[0];
-    setLastTouch({
-      x: touch.clientX,
-      y: touch.clientY,
-      time: Date.now()
-    });
-    setIsTapping(true);
+    const target = e.target;
+    
+    // 确保事件发生在触摸板区域内
+    if (touchpadRef.current && touchpadRef.current.contains(target)) {
+      e.stopPropagation();  // 阻止事件冒泡
+      setLastTouch({
+        x: touch.clientX,
+        y: touch.clientY,
+        time: Date.now()
+      });
+      setIsTapping(true);
+    }
   };
 
   // 创建节流后的事件发送函数
@@ -51,50 +56,61 @@ const TouchPad = ({ onEvent }) => {
 
   // 处理触摸移动
   const handleTouchMove = (e) => {
-    e.preventDefault();
     if (!lastTouch) return;
 
     const touch = e.touches[0];
-    const deltaX = touch.clientX - lastTouch.x;
-    const deltaY = touch.clientY - lastTouch.y;
+    const target = e.target;
+    
+    // 确保事件发生在触摸板区域内
+    if (touchpadRef.current && touchpadRef.current.contains(target)) {
+      e.stopPropagation();  // 阻止事件冒泡
+      const deltaX = touch.clientX - lastTouch.x;
+      const deltaY = touch.clientY - lastTouch.y;
 
-    // 使用节流函数发送事件
-    throttledSendEvent(deltaX, deltaY);
+      // 使用节流函数发送事件
+      throttledSendEvent(deltaX, deltaY);
 
-    setLastTouch({
-      x: touch.clientX,
-      y: touch.clientY,
-      time: Date.now()
-    });
-    setIsTapping(false);
+      setLastTouch({
+        x: touch.clientX,
+        y: touch.clientY,
+        time: Date.now()
+      });
+      setIsTapping(false);
+    }
   };
 
   // 处理触摸结束
   const handleTouchEnd = (e) => {
-    e.preventDefault();
     if (!lastTouch) return;
 
-    const now = Date.now();
-    const tapDuration = now - lastTouch.time;
+    const touch = e.changedTouches[0];
+    const target = e.target;
 
-    // 检测是否为点击（短触摸）
-    if (isTapping && tapDuration < 200) {
-      // 检测双击
-      if (now - lastTapTime < 300) {
-        onEvent({
-          type: 'mouseClick',
-          button: 'left',
-          double: true
-        });
-        setLastTapTime(0);
-      } else {
-        // 单击
-        onEvent({
-          type: 'mouseClick',
-          button: 'left',
-          double: false
-        });
-        setLastTapTime(now);
+    // 确保事件发生在触摸板区域内
+    if (touchpadRef.current && touchpadRef.current.contains(target)) {
+      e.stopPropagation();  // 阻止事件冒泡
+      const now = Date.now();
+      const tapDuration = now - lastTouch.time;
+
+      // 检测是否为点击（短触摸）
+      if (isTapping && tapDuration < 200) {
+        // 检测双击
+        if (now - lastTapTime < 300) {
+          onEvent({
+            type: 'mouseClick',
+            button: 'left',
+            double: true
+          });
+          setLastTapTime(0);
+        } else {
+          // 单击
+          onEvent({
+            type: 'mouseClick',
+            button: 'left',
+            double: false
+          });
+          setLastTapTime(now);
+        }
       }
     }
 

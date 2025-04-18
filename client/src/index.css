@@ -5,6 +5,8 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* 允许页面滚动 */
+  touch-action: pan-x pan-y;
 }
 
 code {
@@ -16,9 +18,8 @@ code {
   min-height: 100vh;
 }
 
-/* 禁用移动设备上的默认触摸行为 */
+/* 修改默认触摸行为，允许页面滚动 */
 * {
-  touch-action: none;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -26,4 +27,12 @@ code {
   -ms-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* 只针对特定的交互组件禁用默认触摸行为 */
+.touchpad-area,
+.key,
+.touchpad-container,
+.keyboard-container .key-row .key {
+  touch-action: none;
 }

@@ -95,25 +95,7 @@ const App = () => {
     }
   };
 
-  const [touchStart, setTouchStart] = useState(null);
-  const [touchEnd, setTouchEnd] = useState(null);
   const contentRef = useRef(null);
-
-  // 处理触摸开始
-  const handleTouchStart = (e) => {
-    setTouchStart(e.touches[0].clientY);
-    setTouchEnd(e.touches[0].clientY);
-  };
-
-  // 处理触摸移动
-  const handleTouchMove = (e) => {
-    setTouchEnd(e.touches[0].clientY);
-    if (contentRef.current) {
-      const delta = touchStart - e.touches[0].clientY;
-      contentRef.current.scrollTop += delta;
-      setTouchStart(e.touches[0].clientY);
-    }
-  };
 
   const toggleTouchpad = () => {
     setTouchpadVisible(!touchpadVisible);
@@ -146,8 +128,6 @@ const App = () => {
       <Content
         className="content"
         ref={contentRef}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
       >
         <div className="connection-panel">
           <Space>

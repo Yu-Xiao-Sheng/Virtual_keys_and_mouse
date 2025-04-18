@@ -3,7 +3,7 @@ import { Button, Radio } from 'antd';
 
 const VirtualKeyboard = ({ onEvent }) => {
   const [pressedKeys, setPressedKeys] = useState(new Set());
-  const [keySize, setKeySize] = useState('medium'); // small, medium, large
+  const [keySize, setKeySize] = useState('large'); // small, medium, large
 
   // 主键盘布局
   const mainKeyboardLayout = [

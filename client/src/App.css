@@ -2,16 +2,12 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .app-container {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  overflow: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .header {
@@ -56,11 +52,12 @@ html, body {
   align-items: center;
   gap: 20px;
   background: #f0f2f5;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
   min-height: calc(100vh - 64px);
   width: 100%;
   box-sizing: border-box;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x pan-y;
 }
 
 .connection-panel {
@@ -101,8 +98,6 @@ html, body {
   background: #fff;
   border-radius: 8px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  touch-action: none;
-  user-select: none;
   box-sizing: border-box;
 }
 
@@ -349,16 +344,6 @@ html, body {
   max-height: 0;
 }
 
-/* 隐藏滚动条但保持可滚动 */
-::-webkit-scrollbar {
-  display: none;
-}
-
-* {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
-}
-
 /* 移动设备滚动优化 */
 @media (max-width: 768px) {
   .content {
@@ -366,13 +351,22 @@ html, body {
   }
 }
 
-/* 禁用默认触摸行为 */
-* {
+/* 只在触摸板区域内禁用默认触摸行为 */
+.touchpad-area {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
+  touch-action: pan-x pan-y pinch-zoom; /* 允许滚动和缩放，但阻止其他触摸行为 */
+  touch-action: none !important;
+  -ms-user-select: none;
+}
+
+/* 修复安卓浏览器上滚动问题 */
+html, body, #root, .app-container, .content {
+  overscroll-behavior-y: contain;
+}
+
+.keyboard-container .key {
+  touch-action: none !important;
 }
